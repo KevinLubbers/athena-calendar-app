@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+x-data="{darkMode: localStorage.getItem('dark') === 'true'}"
+x-init="$watch('darkMode', val => localStorage.setItem('dark', val))"
+x-bind:class="{'dark': darkMode}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,6 +49,9 @@
                             </a>
                         @endif
                     @endauth
+                    <nav class="flex items-center justify-end gap-4">
+                        <livewire:light-dark-button />
+                    </nav>
                 </nav>
             @endif
         </header>
@@ -65,7 +71,6 @@
                                 Read the
                                 <a href="https://laravel.com/docs" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ml-1">
                                     <span>Documentation</span>
-            <livewire:light-dark-button />
                                     <svg
                                         width="10"
                                         height="11"

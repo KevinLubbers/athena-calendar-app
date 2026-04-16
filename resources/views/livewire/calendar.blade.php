@@ -41,7 +41,7 @@ new class extends Component {
 }; ?>
 
 
-<div class="p-6 lg:p-8 bg-white dark:bg-gray-800 dark:bg-gradient-to-bl dark:from-gray-700/50 dark:via-transparent border-b border-gray-200 dark:border-gray-700">
+<div class="p-6 lg:p-8 bg-white dark:text-white dark:bg-gray-800 dark:bg-gradient-to-bl dark:from-gray-700/50 dark:via-transparent border-b border-gray-200 dark:border-gray-700">
 
     <h1 class="mt-2 text-2xl font-medium text-gray-900 dark:text-white">
         Calendar
@@ -55,17 +55,17 @@ new class extends Component {
     <!-- Controls -->
     <div class="flex items-center gap-2 mb-4">
         <button wire:click="prevYear">←</button>
-        <span class="font-bold">{{ $year }}</span>
+        <span class="font-bold text-lg">{{ $year }}</span>
         <button wire:click="nextYear">→</button>
     </div>
 
-    <table class="table-auto border-collapse border w-full text-sm">
+    <table class="table-auto w-full text-sm">
         <thead>
             <tr>
-                <th class="border p-2">Day</th>
+                <th class="p-2">Day</th>
 
                 @foreach ($months as $month)
-                    <th class="border p-2 text-center">
+                    <th class="p-2 text-center">
                         {{ $month->format('M') }}
                     </th>
                 @endforeach
@@ -75,12 +75,11 @@ new class extends Component {
         <tbody>
             @foreach ($days as $day)
                 <tr>
-                    <td class="border p-2 font-bold">{{ $day }}</td>
+                    <td class="p-2 font-bold">{{ $day }}</td>
 
                     @foreach ($months as $month)
-                        <td class="border p-2 text-center">
+                        <td class="text-center">
                             @if ($day <= $month->daysInMonth)
-                                {{ $day }}
                             @endif
                         </td>
                     @endforeach
