@@ -7,6 +7,14 @@ new class extends Component {
     public int $year;
     public array $months = [];
     public array $days = [];
+    public bool $period = false;
+    public bool $fertility = false;
+    public bool $sex = false;
+    public bool $orgasms = false;
+    public bool $medication = false;
+    public bool $pregnancy = false;
+    public bool $clearAll= false;
+
     public function mount() {
         $this->year = now()->year;
 
@@ -18,6 +26,19 @@ new class extends Component {
             ->map(fn ($month) => Carbon::create($this->year, $month, 1))
             ->all();
     
+    }
+
+    public function updatedClearAll($value)
+    {
+        if ($value) {
+            $this->period = false;
+            $this->fertility = false;
+            $this->sex = false;
+            $this->orgasms = false;
+            $this->medication = false;
+            $this->pregnancy = false;
+            $this->clearAll = false;
+        }
     }
 
     public function nextYear()
@@ -59,32 +80,32 @@ new class extends Component {
     </div>
     <div class="flex flex-row flex-wrap">
         <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model="period" />
+            <x-checkbox wire:model.live="period" id="period" />
             <x-label for="period" value="Show Period" />
         </div>
         <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model="fertility"  />
+            <x-checkbox wire:model.live="fertility"  />
             <x-label for="fertility" value="Show Fertility" />
         </div>
         <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model="sex"  />
+            <x-checkbox wire:model.live="sex"  />
             <x-label for="sex" value="Show Sexual Activity" />
         </div>
         <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model="orgasms" />
+            <x-checkbox wire:model.live="orgasms" />
             <x-label for="orgasms" value="Show Orgasms" />
         </div>
         <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model="medication"/>
+            <x-checkbox wire:model.live="medication"/>
             <x-label for="medication" value="Show Medication" />
         </div>
         <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model="pregnancy" />
+            <x-checkbox wire:model.live="pregnancy" />
             <x-label for="pregnancy" value="Show Pregnancy" />
         </div>
         <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model="showNone" />
-            <x-label for="showNone" value="Show None" />
+            <x-checkbox wire:model.live="clearAll" />
+            <x-label for="clearAll" value="Clear All" />
         </div>
     </div>
 
@@ -110,8 +131,12 @@ new class extends Component {
                     @foreach ($months as $month)
                         <td class="text-center align-middle">
                             @if ($day <= $month->daysInMonth)
-                                <div class="mx-auto w-4 h-4 bg-green-600 rounded-full"></div>
-                                <!-- bg-blue-500 bg-red-800 bg-purple-800 -->
+                                @if($period) <div class="mx-auto w-4 h-4 bg-red-800 rounded-full"></div> @endif
+                                @if($fertility)<div class="mx-auto w-4 h-4 bg-orange-600 rounded-full"></div>@endif
+                                @if($sex)<div class="mx-auto w-4 h-4 bg-purple-800 rounded-full"></div>@endif
+                                @if($orgasms)<div class="mx-auto w-4 h-4 bg-indigo-500 rounded-full"></div>@endif
+                                @if($pregnancy)<div class="mx-auto w-4 h-4 bg-blue-500 rounded-full"></div>@endif
+                                @if($medication)<div class="mx-auto w-4 h-4 bg-green-600 rounded-full"></div>@endif
                             @endif
                         </td>
                     @endforeach
