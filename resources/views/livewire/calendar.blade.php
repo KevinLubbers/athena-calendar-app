@@ -72,77 +72,82 @@ new class extends Component {
         This is where you can interact with your calendar
     </p>
 
-<div class="overflow-auto">
-    <div class="flex items-center gap-2 mb-4">
-        <button wire:click="prevYear">←</button>
-        <span class="font-bold text-lg">{{ $year }}</span>
-        <button wire:click="nextYear">→</button>
+    <div class="overflow-auto">
+        <div class="flex items-center gap-2 mb-4">
+            <button wire:click="prevYear">←</button>
+            <span class="font-bold text-lg">{{ $year }}</span>
+            <button wire:click="nextYear">→</button>
+        </div>
+        <div class="flex flex-row flex-wrap">
+            <div class="flex items-center ml-4 gap-2 mb-4">
+                <x-checkbox wire:model.live="period" id="period" />
+                <x-label for="period" value="Show Period" />
+            </div>
+            <div class="flex items-center ml-4 gap-2 mb-4">
+                <x-checkbox wire:model.live="fertility"  />
+                <x-label for="fertility" value="Show Fertility" />
+            </div>
+            <div class="flex items-center ml-4 gap-2 mb-4">
+                <x-checkbox wire:model.live="sex"  />
+                <x-label for="sex" value="Show Sexual Activity" />
+            </div>
+            <div class="flex items-center ml-4 gap-2 mb-4">
+                <x-checkbox wire:model.live="orgasms" />
+                <x-label for="orgasms" value="Show Orgasms" />
+            </div>
+            <div class="flex items-center ml-4 gap-2 mb-4">
+                <x-checkbox wire:model.live="medication"/>
+                <x-label for="medication" value="Show Medication" />
+            </div>
+            <div class="flex items-center ml-4 gap-2 mb-4">
+                <x-checkbox wire:model.live="pregnancy" />
+                <x-label for="pregnancy" value="Show Pregnancy" />
+            </div>
+            <div class="flex items-center ml-4 gap-2 mb-4">
+                <x-checkbox wire:model.live="clearAll" />
+                <x-label for="clearAll" value="Clear All" />
+            </div>
+        </div>
     </div>
-    <div class="flex flex-row flex-wrap">
-        <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model.live="period" id="period" />
-            <x-label for="period" value="Show Period" />
-        </div>
-        <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model.live="fertility"  />
-            <x-label for="fertility" value="Show Fertility" />
-        </div>
-        <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model.live="sex"  />
-            <x-label for="sex" value="Show Sexual Activity" />
-        </div>
-        <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model.live="orgasms" />
-            <x-label for="orgasms" value="Show Orgasms" />
-        </div>
-        <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model.live="medication"/>
-            <x-label for="medication" value="Show Medication" />
-        </div>
-        <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model.live="pregnancy" />
-            <x-label for="pregnancy" value="Show Pregnancy" />
-        </div>
-        <div class="flex items-center ml-4 gap-2 mb-4">
-            <x-checkbox wire:model.live="clearAll" />
-            <x-label for="clearAll" value="Clear All" />
-        </div>
-    </div>
 
 
-    <table class="table-auto w-full text-sm">
-        <thead>
-            <tr>
-                <th class="p-2">Day</th>
-
-                @foreach ($months as $month)
-                    <th class="p-2 text-center">
-                        {{ $month->format('M') }}
-                    </th>
-                @endforeach
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach ($days as $day)
+    <div class="overflow-auto">
+        <table class="table-auto w-full text-sm">
+            <thead>
                 <tr>
-                    <td class="p-2 font-bold text-center">{{ $day }}</td>
+                    <th class="p-2">Day</th>
 
                     @foreach ($months as $month)
-                        <td class="text-center align-middle">
-                            @if ($day <= $month->daysInMonth)
-                                @if($period) <div class="mx-auto w-4 h-4 bg-red-800 rounded-full"></div> @endif
-                                @if($fertility)<div class="mx-auto w-4 h-4 bg-orange-600 rounded-full"></div>@endif
-                                @if($sex)<div class="mx-auto w-4 h-4 bg-purple-800 rounded-full"></div>@endif
-                                @if($orgasms)<div class="mx-auto w-4 h-4 bg-indigo-500 rounded-full"></div>@endif
-                                @if($pregnancy)<div class="mx-auto w-4 h-4 bg-blue-500 rounded-full"></div>@endif
-                                @if($medication)<div class="mx-auto w-4 h-4 bg-green-600 rounded-full"></div>@endif
-                            @endif
-                        </td>
+                        <th class="p-2 text-center">
+                            {{ $month->format('M') }}
+                        </th>
                     @endforeach
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+                @foreach ($days as $day)
+                    <tr>
+                        <td class="font-bold text-center">{{ $day }}</td>
+
+                        @foreach ($months as $month)
+                            <td class="text-center align-middle border-l border-r border-gray-700 dark:border-gray-200">
+                                @if ($day <= $month->daysInMonth)
+                                <div class="flex flex-row">
+                                    @if($period) <div class="mx-auto w-4 h-4 bg-red-800 rounded-full"></div> @endif
+                                    @if($fertility)<div class="mx-auto w-4 h-4 bg-orange-600 rounded-full"></div>@endif
+                                    @if($sex)<div class="mx-auto w-4 h-4 bg-purple-800 rounded-full"></div>@endif
+                                    @if($orgasms)<div class="mx-auto w-4 h-4 bg-indigo-500 rounded-full"></div>@endif
+                                    @if($medication)<div class="mx-auto w-4 h-4 bg-green-600 rounded-full"></div>@endif
+                                    @if($pregnancy)<div class="mx-auto w-4 h-4 bg-blue-500 rounded-full"></div>@endif
+                                </div>
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
     
 </div>
