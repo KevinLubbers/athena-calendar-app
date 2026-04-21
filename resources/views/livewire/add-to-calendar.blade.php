@@ -15,7 +15,7 @@ new class extends Component {
     public bool $pregnancy = false;
     public bool $clearAll= false;
 
-    public string $viewState = 'Year at a Glance';
+    public string $viewState = 'Click to Add';
 
     public function mount() {
         $this->year = now()->year;
