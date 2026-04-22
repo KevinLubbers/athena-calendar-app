@@ -30,6 +30,7 @@ new class extends Component {
     
     }
 
+
     public function updatedClearAll($value)
     {
         if ($value) {
@@ -76,32 +77,38 @@ new class extends Component {
             <span class="font-bold text-lg">{{ $year }}</span>
             <button wire:click="nextYear">→</button>
         </div>
-        <div class="flex flex-row flex-wrap">
+        <div class="flex flex-row flex-wrap gap-6">
             <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="period" id="period" />
-                <x-label for="period" value="Show Period" />
+                <x-label for="period" value="Add Period" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-red-500"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="fertility"  />
-                <x-label for="fertility" value="Show Fertility" />
+                <x-label for="fertility" value="Add Fertility" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-orange-600"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="sex"  />
-                <x-label for="sex" value="Show Sexual Activity" />
+                <x-label for="sex" value="Add Sexual Activity" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-purple-800"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="orgasms" />
-                <x-label for="orgasms" value="Show Orgasms" />
+                <x-label for="orgasms" value="Add Orgasms" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-indigo-500"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="medication"/>
-                <x-label for="medication" value="Show Medication" />
+                <x-label for="medication" value="Add Medication" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-green-600"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="pregnancy" />
-                <x-label for="pregnancy" value="Show Pregnancy" />
+                <x-label for="pregnancy" value="Add Pregnancy" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-blue-500"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="clearAll" />
                 <x-label for="clearAll" value="Clear All" />
             </div>
@@ -131,13 +138,13 @@ new class extends Component {
                         @foreach ($months as $month)
                             <td class="text-center align-middle border-l border-r border-gray-700 dark:border-gray-200">
                                 @if ($day <= $month->daysInMonth)
-                                <div class="flex flex-row">
-                                    @if($period) <div class="mx-auto w-4 h-4 bg-red-800 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($fertility)<div class="mx-auto w-4 h-4 bg-orange-600 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($sex)<div class="mx-auto w-4 h-4 bg-purple-800 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($orgasms)<div class="mx-auto w-4 h-4 bg-indigo-500 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($medication)<div class="mx-auto w-4 h-4 bg-green-600 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($pregnancy)<div class="mx-auto w-4 h-4 bg-blue-500 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
+                                <div class="flex flex-row" x-data="{ period: false, fertility: false, sex: false, orgasms: false, medication: false, pregnancy: false }">
+                                    @if($period) <div @click="period = !period" x-bind:class="period ? 'bg-red-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($fertility)<div @click="fertility = !fertility" x-bind:class="fertility ? 'bg-orange-600' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($sex)<div @click="sex = !sex" x-bind:class="sex ? 'bg-purple-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($orgasms)<div @click="orgasms = !orgasms" x-bind:class="orgasms ? 'bg-indigo-500' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($medication)<div @click="medication = !medication" x-bind:class="medication ? 'bg-green-600' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($pregnancy)<div @click="pregnancy = !pregnancy" x-bind:class="pregnancy ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
                                 </div>
                                 @endif
                             </td>

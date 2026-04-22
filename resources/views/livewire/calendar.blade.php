@@ -76,32 +76,38 @@ new class extends Component {
             <span class="font-bold text-lg">{{ $year }}</span>
             <button wire:click="nextYear">→</button>
         </div>
-        <div class="flex flex-row flex-wrap">
+        <div class="flex flex-row flex-wrap gap-6">
             <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="period" id="period" />
                 <x-label for="period" value="Show Period" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-red-500"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="fertility"  />
                 <x-label for="fertility" value="Show Fertility" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-orange-600"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="sex"  />
                 <x-label for="sex" value="Show Sexual Activity" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-purple-800"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="orgasms" />
                 <x-label for="orgasms" value="Show Orgasms" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-indigo-500"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="medication"/>
                 <x-label for="medication" value="Show Medication" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-green-600"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="pregnancy" />
                 <x-label for="pregnancy" value="Show Pregnancy" />
+                <div class="mx-auto w-4 h-4 rounded-full bg-blue-500"></div>
             </div>
-            <div class="flex items-center ml-4 gap-2">
+            <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="clearAll" />
                 <x-label for="clearAll" value="Clear All" />
             </div>
