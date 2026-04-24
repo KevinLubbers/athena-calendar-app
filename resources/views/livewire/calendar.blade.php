@@ -76,11 +76,11 @@ new class extends Component {
             <span class="font-bold text-lg">{{ $year }}</span>
             <button wire:click="nextYear">→</button>
         </div>
-        <div class="flex flex-row flex-wrap gap-6">
+        <div class="flex flex-row flex-wrap gap-x-6 gap-y-2">
             <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="period" id="period" />
                 <x-label for="period" value="Show Period" />
-                <div class="mx-auto w-4 h-4 rounded-full bg-red-500"></div>
+                <div class="mx-auto w-4 h-4 rounded-full bg-red-800"></div>
             </div>
             <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="fertility"  />

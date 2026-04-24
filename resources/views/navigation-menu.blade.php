@@ -13,7 +13,7 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('calendar') }}" :active="request()->routeIs('calendar')">
-                        {{ __('Your Calendar') }}
+                        {{ __('View Calendar') }}
                     </x-nav-link>
                     <x-nav-link href="{{ route('adding') }}" :active="request()->routeIs('adding')">
                         {{ __('Add to Calendar') }}
@@ -145,7 +145,10 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link href="{{ route('calendar') }}" :active="request()->routeIs('calendar')">
-                {{ __('Calendar') }}
+                {{ __('View Calendar') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('adding') }}" :active="request()->routeIs('adding')">
+                {{ __('Add to Calendar') }}
             </x-responsive-nav-link>
         </div>
 

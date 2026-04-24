@@ -33,6 +33,10 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function dates(){
+        return $this->hasMany(CalendarDate::class, 'user_id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

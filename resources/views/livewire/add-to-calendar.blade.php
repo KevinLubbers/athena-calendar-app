@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use Carbon\Carbon;
+use App\Models\CalendarDate;
 
 new class extends Component {
     public int $year;
@@ -16,20 +17,40 @@ new class extends Component {
     public bool $clearAll= false;
 
     public string $viewState = 'Click to Add';
+    public $alreadyAdded = [];
 
     public function mount() {
+        $this->alreadyAdded = \App\Models\CalendarDate::where('user_id', auth()->id())
+            ->get()
+            ->groupBy(fn ($item) => $item->date . '-' . $item->type)
+            ->map(fn ($group) => true)
+            ->toArray();
         $this->year = now()->year;
-
-        // Days 1–31
         $this->days = range(1, 31);
-
-        // Build months using Carbon
         $this->months = collect(range(1, 12))
             ->map(fn ($month) => Carbon::create($this->year, $month, 1))
             ->all();
     
     }
 
+    public function toggle($date, $type) {
+        $user = auth()->user();
+
+        $existing = CalendarDate::where('user_id', $user->id)
+        ->whereDate('date', $date)
+        ->where('type', $type)
+        ->first();
+
+        if ($existing) {
+            $existing->delete(); 
+        } else {
+            CalendarDate::create([
+                'user_id' => $user->id,
+                'date' => $date,
+                'type' => $type,
+            ]);
+        }
+    }
 
     public function updatedClearAll($value)
     {
@@ -77,11 +98,11 @@ new class extends Component {
             <span class="font-bold text-lg">{{ $year }}</span>
             <button wire:click="nextYear">→</button>
         </div>
-        <div class="flex flex-row flex-wrap gap-6">
+        <div class="flex flex-row flex-wrap gap-x-6 gap-y-2">
             <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="period" id="period" />
                 <x-label for="period" value="Add Period" />
-                <div class="mx-auto w-4 h-4 rounded-full bg-red-500"></div>
+                <div class="mx-auto w-4 h-4 rounded-full bg-red-800"></div>
             </div>
             <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="fertility"  />
@@ -138,8 +159,11 @@ new class extends Component {
                         @foreach ($months as $month)
                             <td class="text-center align-middle border-l border-r border-gray-700 dark:border-gray-200">
                                 @if ($day <= $month->daysInMonth)
+                                @php
+                                    $date = Carbon::create($this->year, $month->month, $day);
+                                @endphp
                                 <div class="flex flex-row" x-data="{ period: false, fertility: false, sex: false, orgasms: false, medication: false, pregnancy: false }">
-                                    @if($period) <div @click="period = !period" x-bind:class="period ? 'bg-red-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($period) <div @click="period = !period; $wire.toggle('{{ $date }}', 'period')" @touchmove="period = !period" x-bind:class="period ? 'bg-red-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
                                     @if($fertility)<div @click="fertility = !fertility" x-bind:class="fertility ? 'bg-orange-600' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
                                     @if($sex)<div @click="sex = !sex" x-bind:class="sex ? 'bg-purple-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
                                     @if($orgasms)<div @click="orgasms = !orgasms" x-bind:class="orgasms ? 'bg-indigo-500' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
