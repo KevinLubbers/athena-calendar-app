@@ -15,8 +15,9 @@ new class extends Component {
     public bool $medication = false;
     public bool $pregnancy = false;
     public bool $clearAll= false;
+    public bool $showAll = false;
 
-    public string $viewState = 'Click to Add';
+    public string $viewState = 'Click to Add or Remove';
     public $alreadyAdded = [];
 
     public function mount() {
@@ -69,6 +70,19 @@ new class extends Component {
             $this->medication = false;
             $this->pregnancy = false;
             $this->clearAll = false;
+        }
+    }
+
+    public function updatedShowAll($value)
+    {
+        if ($value) {
+            $this->period = true;
+            $this->fertility = true;
+            $this->sex = true;
+            $this->orgasms = true;
+            $this->medication = true;
+            $this->pregnancy = true;
+            $this->showAll = false;
         }
     }
 
@@ -139,6 +153,10 @@ new class extends Component {
             <div class="flex items-center gap-2">
                 <x-checkbox wire:model.live="clearAll" />
                 <x-label for="clearAll" value="Clear All" />
+            </div>
+            <div class="flex items-center gap-2">
+                <x-checkbox wire:model.live="showAll" />
+                <x-label for="showAll" value="Show All" />
             </div>
         </div>
     </div>

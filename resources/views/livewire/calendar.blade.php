@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use Carbon\Carbon;
+use App\Models\CalendarDate;
 
 new class extends Component {
     public int $year;
@@ -14,16 +15,25 @@ new class extends Component {
     public bool $medication = false;
     public bool $pregnancy = false;
     public bool $clearAll= false;
+    public bool $showAll = false;
 
     public string $viewState = 'Year at a Glance';
+    public $alreadyAdded = [];
 
     public function mount() {
+        $this->alreadyAdded = \App\Models\CalendarDate::where('user_id', auth()->id())
+            ->get()
+            ->groupBy('date')
+            ->map(function ($items) {
+                return $items->pluck('type')
+                    ->mapWithKeys(fn ($type) => [$type => true])
+                    ->toArray();
+            })
+            ->toArray();
         $this->year = now()->year;
 
-        // Days 1–31
         $this->days = range(1, 31);
 
-        // Build months using Carbon
         $this->months = collect(range(1, 12))
             ->map(fn ($month) => Carbon::create($this->year, $month, 1))
             ->all();
@@ -40,6 +50,18 @@ new class extends Component {
             $this->medication = false;
             $this->pregnancy = false;
             $this->clearAll = false;
+        }
+    }
+    public function updatedShowAll($value)
+    {
+        if ($value) {
+            $this->period = true;
+            $this->fertility = true;
+            $this->sex = true;
+            $this->orgasms = true;
+            $this->medication = true;
+            $this->pregnancy = true;
+            $this->showAll = false;
         }
     }
 
@@ -111,11 +133,15 @@ new class extends Component {
                 <x-checkbox wire:model.live="clearAll" />
                 <x-label for="clearAll" value="Clear All" />
             </div>
+            <div class="flex items-center gap-2">
+                <x-checkbox wire:model.live="showAll" />
+                <x-label for="showAll" value="Show All" />
+            </div>
         </div>
     </div>
 
 
-    <div class="overflow-auto">
+    <div class="overflow-auto" x-data="{ added: @entangle('alreadyAdded') }">
         <table class="table-auto w-full text-sm">
             <thead>
                 <tr>
@@ -137,13 +163,16 @@ new class extends Component {
                         @foreach ($months as $month)
                             <td class="text-center align-middle border-l border-r border-gray-700 dark:border-gray-200">
                                 @if ($day <= $month->daysInMonth)
+                                @php
+                                    $date = Carbon::create($this->year, $month->month, $day)->format('Y-m-d');
+                                @endphp
                                 <div class="flex flex-row">
-                                    @if($period) <div class="mx-auto w-4 h-4 bg-red-800 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($fertility)<div class="mx-auto w-4 h-4 bg-orange-600 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($sex)<div class="mx-auto w-4 h-4 bg-purple-800 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($orgasms)<div class="mx-auto w-4 h-4 bg-indigo-500 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($medication)<div class="mx-auto w-4 h-4 bg-green-600 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
-                                    @if($pregnancy)<div class="mx-auto w-4 h-4 bg-blue-500 rounded-full"></div>@else<div class="mx-auto w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full"></div>@endif
+                                    @if($period) <div x-bind:class="(added['{{ $date }}']?.period ?? false) ? 'bg-red-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($fertility)<div x-bind:class="(added['{{ $date }}']?.fertility ?? false) ? 'bg-orange-600' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($sex)<div x-bind:class="(added['{{ $date }}']?.sex ?? false) ? 'bg-purple-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($orgasms)<div x-bind:class="(added['{{ $date }}']?.orgasms ?? false) ? 'bg-indigo-500' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($medication)<div x-bind:class="(added['{{ $date }}']?.medication ?? false) ? 'bg-green-600' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($pregnancy)<div x-bind:class="(added['{{ $date }}']?.pregnancy ?? false) ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
                                 </div>
                                 @endif
                             </td>
