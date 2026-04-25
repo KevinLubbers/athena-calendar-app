@@ -22,8 +22,12 @@ new class extends Component {
     public function mount() {
         $this->alreadyAdded = \App\Models\CalendarDate::where('user_id', auth()->id())
             ->get()
-            ->groupBy(fn ($item) => $item->date . '-' . $item->type)
-            ->map(fn ($group) => true)
+            ->groupBy('date')
+            ->map(function ($items) {
+                return $items->pluck('type')
+                    ->mapWithKeys(fn ($type) => [$type => true])
+                    ->toArray();
+            })
             ->toArray();
         $this->year = now()->year;
         $this->days = range(1, 31);
@@ -42,13 +46,16 @@ new class extends Component {
         ->first();
 
         if ($existing) {
-            $existing->delete(); 
+            $existing->delete();
+            $this->alreadyAdded[$date][$type] = false;
+
         } else {
             CalendarDate::create([
                 'user_id' => $user->id,
                 'date' => $date,
                 'type' => $type,
             ]);
+            $this->alreadyAdded[$date][$type] = true;
         }
     }
 
@@ -137,7 +144,7 @@ new class extends Component {
     </div>
 
 
-    <div class="overflow-auto">
+    <div class="overflow-auto" x-data="{ added: @entangle('alreadyAdded') }">
         <table class="table-auto w-full text-sm">
             <thead>
                 <tr>
@@ -160,15 +167,15 @@ new class extends Component {
                             <td class="text-center align-middle border-l border-r border-gray-700 dark:border-gray-200">
                                 @if ($day <= $month->daysInMonth)
                                 @php
-                                    $date = Carbon::create($this->year, $month->month, $day);
+                                    $date = Carbon::create($this->year, $month->month, $day)->format('Y-m-d');
                                 @endphp
                                 <div class="flex flex-row" x-data="{ period: false, fertility: false, sex: false, orgasms: false, medication: false, pregnancy: false }">
-                                    @if($period) <div @click="period = !period; $wire.toggle('{{ $date }}', 'period')" @touchmove="period = !period" x-bind:class="period ? 'bg-red-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
-                                    @if($fertility)<div @click="fertility = !fertility" x-bind:class="fertility ? 'bg-orange-600' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
-                                    @if($sex)<div @click="sex = !sex" x-bind:class="sex ? 'bg-purple-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
-                                    @if($orgasms)<div @click="orgasms = !orgasms" x-bind:class="orgasms ? 'bg-indigo-500' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
-                                    @if($medication)<div @click="medication = !medication" x-bind:class="medication ? 'bg-green-600' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
-                                    @if($pregnancy)<div @click="pregnancy = !pregnancy" x-bind:class="pregnancy ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($period) <div @click="added['{{ $date }}'] ??= {}; added['{{ $date }}']['period'] = !added['{{ $date }}']['period']; $wire.toggle('{{ $date }}', 'period')" x-bind:class="(added['{{ $date }}']?.period ?? false) ? 'bg-red-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($fertility)<div @click="added['{{ $date }}'] ??= {}; added['{{ $date }}']['fertility'] = !added['{{ $date }}']['fertility']; $wire.toggle('{{ $date }}', 'fertility')" x-bind:class="(added['{{ $date }}']?.fertility ?? false) ? 'bg-orange-600' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($sex)<div @click="added['{{ $date }}'] ??= {}; added['{{ $date }}']['sex'] = !added['{{ $date }}']['sex']; $wire.toggle('{{ $date }}', 'sex')" x-bind:class="(added['{{ $date }}']?.sex ?? false) ? 'bg-purple-800' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($orgasms)<div @click="added['{{ $date }}'] ??= {}; added['{{ $date }}']['orgasms'] = !added['{{ $date }}']['orgasms']; $wire.toggle('{{ $date }}', 'orgasms')" x-bind:class="(added['{{ $date }}']?.orgasms ?? false) ? 'bg-indigo-500' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($medication)<div @click="added['{{ $date }}'] ??= {}; added['{{ $date }}']['medication'] = !added['{{ $date }}']['medication']; $wire.toggle('{{ $date }}', 'medication')" x-bind:class="(added['{{ $date }}']?.medication ?? false) ? 'bg-green-600' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
+                                    @if($pregnancy)<div @click="added['{{ $date }}'] ??= {}; added['{{ $date }}']['pregnancy'] = !added['{{ $date }}']['pregnancy']; $wire.toggle('{{ $date }}', 'pregnancy')" x-bind:class="(added['{{ $date }}']?.pregnancy ?? false) ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'" class="mx-auto w-4 h-4 rounded-full"></div>@endif
                                 </div>
                                 @endif
                             </td>
