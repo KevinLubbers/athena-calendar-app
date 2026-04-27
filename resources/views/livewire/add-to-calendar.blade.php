@@ -10,7 +10,6 @@ new class extends Component {
     public array $days = [];
 
     public string $viewState = 'Click to Add or Remove';
-    public $alreadyAdded = [];
 
     public function mount() {
         $this->year = now()->year;
@@ -19,21 +18,20 @@ new class extends Component {
             ->map(fn ($month) => Carbon::create($this->year, $month, 1))
             ->all();
     
-        $this->loadCalendar();
     }
-    public function loadCalendar() {
+    public function getAddedProperty() {
         $rows = CalendarDate::where('user_id', auth()->id())
             ->whereYear('date', $this->year)
             ->select('date', 'type')
             ->get();
 
-        $added = [];
+        $added= [];
         foreach ($rows as $row) {
             $added[$row->date][$row->type] = true;
         }
-        $this->alreadyAdded = $added;
-    }
 
+        return $added;
+    }
     public function toggle($date, $type) {
         $user = auth()->user();
 
@@ -44,14 +42,12 @@ new class extends Component {
 
         if ($existing) {
             $existing->delete();
-            $this->alreadyAdded[$date][$type] = false;
         } else {
             CalendarDate::create([
                 'user_id' => $user->id,
                 'date' => $date,
                 'type' => $type,
             ]);
-            $this->alreadyAdded[$date][$type] = true;
         }
     }
 
@@ -72,8 +68,6 @@ new class extends Component {
         $this->months = collect(range(1, 12))
             ->map(fn ($month) => Carbon::create($this->year, $month, 1))
             ->all();
-
-        $this->loadCalendar();
     }
 }; ?>
 
@@ -136,7 +130,7 @@ new class extends Component {
     </div>
 
 
-    <div class="overflow-auto" x-data="{ added: @entangle('alreadyAdded'), }">
+    <div class="overflow-auto" wire:ignore x-data="{ added: @js($this->added) }">
         <table class="table-auto w-full text-sm">
             <thead>
                 <tr>

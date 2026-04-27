@@ -10,7 +10,6 @@ new class extends Component {
     public array $days = [];
 
     public string $viewState = 'Year at a Glance';
-    public $alreadyAdded = [];
 
     public function mount() {
         $this->year = now()->year;
@@ -18,20 +17,19 @@ new class extends Component {
         $this->months = collect(range(1, 12))
             ->map(fn ($month) => Carbon::create($this->year, $month, 1))
             ->all();
-    
-        $this->loadCalendar();
     }
-    public function loadCalendar() {
+    public function getAddedProperty() {
         $rows = CalendarDate::where('user_id', auth()->id())
             ->whereYear('date', $this->year)
             ->select('date', 'type')
             ->get();
 
-        $added = [];
+        $added= [];
         foreach ($rows as $row) {
             $added[$row->date][$row->type] = true;
         }
-        $this->alreadyAdded = $added;
+
+        return $added;
     }
 
     public function nextYear()
@@ -51,8 +49,6 @@ new class extends Component {
         $this->months = collect(range(1, 12))
             ->map(fn ($month) => Carbon::create($this->year, $month, 1))
             ->all();
-        
-        $this->loadCalendar();
     }
 }; ?>
 
@@ -73,32 +69,32 @@ new class extends Component {
         <div class="flex flex-row flex-wrap gap-x-6 gap-y-2">
             <div class="flex items-center gap-2">
                 <x-checkbox x-model="period" />
-                <x-label for="period" value="Add Period" />
+                <x-label for="period" value="Show Period" />
                 <div class="mx-auto w-4 h-4 rounded-full bg-red-800"></div>
             </div>
             <div class="flex items-center gap-2">
                 <x-checkbox x-model="fertility" />
-                <x-label for="fertility" value="Add Fertility" />
+                <x-label for="fertility" value="Show Fertility" />
                 <div class="mx-auto w-4 h-4 rounded-full bg-orange-600"></div>
             </div>
             <div class="flex items-center gap-2">
                 <x-checkbox x-model="sex"  />
-                <x-label for="sex" value="Add Sexual Activity" />
+                <x-label for="sex" value="Show Sexual Activity" />
                 <div class="mx-auto w-4 h-4 rounded-full bg-purple-800"></div>
             </div>
             <div class="flex items-center gap-2">
                 <x-checkbox x-model="orgasms" />
-                <x-label for="orgasms" value="Add Orgasms" />
+                <x-label for="orgasms" value="Show Orgasms" />
                 <div class="mx-auto w-4 h-4 rounded-full bg-indigo-500"></div>
             </div>
             <div class="flex items-center gap-2">
                 <x-checkbox x-model="medication" />
-                <x-label for="medication" value="Add Medication" />
+                <x-label for="medication" value="Show Medication" />
                 <div class="mx-auto w-4 h-4 rounded-full bg-green-600"></div>
             </div>
             <div class="flex items-center gap-2">
                 <x-checkbox x-model="pregnancy" />
-                <x-label for="pregnancy" value="Add Pregnancy" />
+                <x-label for="pregnancy" value="Show Pregnancy" />
                 <div class="mx-auto w-4 h-4 rounded-full bg-blue-500"></div>
             </div>
         </div>
@@ -115,7 +111,7 @@ new class extends Component {
     </div>
 
 
-    <div class="overflow-auto" x-data="{ added: @entangle('alreadyAdded') }">
+    <div class="overflow-auto" x-data="{ added: @js($this->added) }">
         <table class="table-auto w-full text-sm">
             <thead>
                 <tr>
